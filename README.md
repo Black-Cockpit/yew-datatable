@@ -7,7 +7,7 @@
 A fully-featured, headless data table library for [Yew](https://yew.rs/) applications, inspired by [TanStack Table v8](https://tanstack.com/table/latest). Provides compile-time type safety, a modular feature set, and a familiar hook-based API for building performant data-driven interfaces in Rust and WebAssembly.
 
 <div align="center">
-  <img src="assets/yew_data_table.png" alt="yew-datatable" />
+  <img src="https://raw.githubusercontent.com/Black-Cockpit/yew-datatable/master/assets/yew_data_table.png" alt="yew-datatable" />
 </div>
 
 ## Overview
