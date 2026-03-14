@@ -1,0 +1,64 @@
+# Deploy Pipeline — Yew DataTable
+#
+# Automated deployment pipeline for publishing yew-datatable crates to crates.io.
+# Triggers on release events to publish both the core engine and UI library packages.
+# Publishes yew-datatable-core first since yew-datatable depends on it.
+
+name: Deploy
+
+# Triggers
+# Run on release events when published, or manual dispatch.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+# Jobs
+
+jobs:
+  publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+
+    steps:
+      # --- Checkout & Setup ---
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # --- Dependency Cache ---
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-deploy-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-deploy-
+
+      # --- Build Check ---
+      - name: Build workspace
+        run: cargo build --package yew-datatable-core --package yew-datatable
+
+      # --- Publish Core Crate First ---
+      # The core crate must be published before the UI crate since
+      # yew-datatable depends on yew-datatable-core.
+      - name: Publish yew-datatable-core to crates.io
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish --package yew-datatable-core
+
+      # --- Wait for Registry Propagation ---
+      - name: Wait for crates.io index update
+        run: sleep 30
+
+      # --- Publish UI Crate ---
+      - name: Publish yew-datatable to crates.io
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish --package yew-datatable

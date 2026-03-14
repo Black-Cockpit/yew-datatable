@@ -1,0 +1,101 @@
+# CI Pipeline — Yew DataTable
+#
+# Continuous integration pipeline for the yew-datatable workspace.
+# Runs formatting checks, linting, and unit tests on all pull requests
+# and pushes to the master branch.
+
+name: CI
+
+# Triggers
+# Run on pushes and pull requests to the master branch.
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# Jobs
+
+jobs:
+  lint:
+    if: github.event_name == 'push' || github.event.pull_request.merged == false
+    name: Lint & Format
+    runs-on: ubuntu-latest
+
+    steps:
+      # --- Checkout & Setup ---
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      # --- Dependency Cache ---
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-lint-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-lint-
+
+      # --- Format Check ---
+      - name: Check code formatting
+        run: cargo fmt --all -- --check
+
+      # --- Lint (Clippy) ---
+      # Run clippy on the core crate with native target to avoid WASM-only issues.
+      - name: Run Clippy (core)
+        run: cargo clippy --package yew-datatable-core --all-targets -- -D warnings
+
+  test:
+    if: github.event_name == 'push' || github.event.pull_request.merged == false
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # --- Checkout & Setup ---
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # --- Dependency Cache ---
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-test-
+
+      # --- Unit Tests ---
+      # Run core crate tests on the native target.
+      - name: Run tests (core)
+        run: cargo test --package yew-datatable-core --target x86_64-unknown-linux-gnu
+
+      # --- Test Coverage ---
+      - name: Install cargo-tarpaulin
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-tarpaulin
+
+      - name: Run tests with coverage
+        run: cargo tarpaulin --out Xml --package yew-datatable-core --target x86_64-unknown-linux-gnu --tests
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./tarpaulin-report.xml
+          fail_ci_if_error: false

@@ -1,0 +1,11 @@
+[package]
+name = "yew-datatable-example"
+description = "Example application demonstrating yew-datatable features"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+yew-datatable = { workspace = true }
+yew = { workspace = true }
+web-sys = { version = "0.3", features = ["HtmlInputElement"] }

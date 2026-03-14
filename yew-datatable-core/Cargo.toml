@@ -1,0 +1,54 @@
+# Yew DataTable Core — Cargo Manifest
+#
+# A headless data table engine for Rust/WASM applications inspired by
+# TanStack Table v8. Provides the core table logic including column
+# definitions, row processing pipeline, sorting, filtering, pagination,
+# selection, grouping, and aggregation — all without UI dependencies.
+
+[package]
+
+# Package name as published on crates.io.
+name = "yew-datatable-core"
+
+# Brief description of the package purpose and scope.
+description = "Headless data table engine for Rust/WASM - TanStack Table inspired"
+
+# Inherited workspace metadata.
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+rust-version.workspace = true
+
+# Markdown documentation file for crates.io.
+readme = "../README.md"
+
+# Package categorization for crate registry.
+keywords = ["web", "wasm", "datatable", "headless", "tanstack"]
+categories = ["wasm"]
+
+# Feature Configuration
+
+[features]
+
+# Default feature set activated when none are explicitly specified.
+default = []
+
+# Enables serde serialization and deserialization for state types.
+serde = ["dep:serde"]
+
+# Dependencies
+
+[dependencies]
+
+# Serialization framework (optional, enabled via `serde` feature).
+serde = { workspace = true, optional = true }
+
+# Development Dependencies
+
+[dev-dependencies]
+
+# JSON parser for test data serialization.
+serde_json = { workspace = true }

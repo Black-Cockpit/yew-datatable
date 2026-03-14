@@ -1,0 +1,52 @@
+# Yew DataTable — Cargo Manifest
+#
+# Data table component library for Yew applications inspired by
+# TanStack Table v8. Provides Yew hooks, pre-built components,
+# and seamless integration with the headless yew-datatable-core engine.
+
+[package]
+
+# Package name as published on crates.io.
+name = "yew-datatable"
+
+# Brief description of the package purpose and scope.
+description = "Data table component library for Yew - TanStack Table inspired"
+
+# Inherited workspace metadata.
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+rust-version.workspace = true
+
+# Markdown documentation file for crates.io.
+readme = "../README.md"
+
+# Package categorization for crate registry.
+keywords = ["web", "wasm", "yew", "datatable", "component"]
+categories = ["wasm"]
+
+# Feature Configuration
+
+[features]
+
+# Default feature set activated when none are explicitly specified.
+default = []
+
+# Dependencies
+
+[dependencies]
+
+# Headless data table engine providing core logic and state management.
+yew-datatable-core = { workspace = true }
+
+# Yew framework for WebAssembly frontend development.
+yew = { workspace = true }
+
+# WebAssembly browser API bindings for DOM element access.
+web-sys = { workspace = true, features = ["HtmlInputElement", "HtmlSelectElement", "Event", "MouseEvent", "KeyboardEvent"] }
+
+# Rust-to-JavaScript interop layer for type casting in event handlers.
+wasm-bindgen = { workspace = true }

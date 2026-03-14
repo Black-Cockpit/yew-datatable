@@ -1,0 +1,98 @@
+# GitHub Pages Pipeline — Yew DataTable
+#
+# Automated deployment pipeline for publishing the example application
+# as a GitHub Pages site. Builds the Yew example using Trunk and deploys
+# the generated static assets to the gh-pages branch.
+
+name: Deploy Example to GitHub Pages
+
+# Triggers
+# Run on pushes to the master branch, or manual dispatch.
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+# Permissions
+# Required for GitHub Pages deployment.
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Concurrency
+# Prevent concurrent deployments to avoid conflicts.
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# Jobs
+
+jobs:
+  build:
+    name: Build Example
+    runs-on: ubuntu-latest
+
+    steps:
+      # --- Checkout & Setup ---
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      # --- Install Trunk ---
+      # Trunk is the build tool for Yew applications that compiles
+      # Rust to WebAssembly and bundles the output with HTML/CSS assets.
+      - name: Install Trunk
+        uses: jetli/trunk-action@v0.5.0
+        with:
+          version: "latest"
+
+      # --- Dependency Cache ---
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-pages-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-pages-
+
+      # --- Build Example ---
+      # Build the example application for production with the public URL
+      # set to the GitHub Pages base path for the repository.
+      - name: Build example with Trunk
+        run: trunk build --release --public-url /yew-datatable/
+        working-directory: example
+
+      # --- Upload Artifact ---
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: example/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # --- Deploy ---
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
