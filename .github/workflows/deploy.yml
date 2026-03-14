@@ -28,6 +28,8 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
 
       # --- Dependency Cache ---
       - name: Cache Cargo dependencies
@@ -42,8 +44,11 @@ jobs:
             ${{ runner.os }}-cargo-deploy-
 
       # --- Build Check ---
-      - name: Build workspace
-        run: cargo build --package yew-datatable-core --package yew-datatable
+      - name: Build core crate
+        run: cargo build --package yew-datatable-core
+
+      - name: Build UI crate (wasm)
+        run: cargo build --package yew-datatable --target wasm32-unknown-unknown
 
       # --- Publish Core Crate First ---
       # The core crate must be published before the UI crate since
@@ -61,4 +66,4 @@ jobs:
       - name: Publish yew-datatable to crates.io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish --package yew-datatable
+        run: cargo publish --package yew-datatable --target wasm32-unknown-unknown
