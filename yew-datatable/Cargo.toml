@@ -28,6 +28,12 @@ readme = "../README.md"
 keywords = ["web", "wasm", "yew", "datatable", "component"]
 categories = ["wasm"]
 
+# Library target configuration for wasm-pack compatibility.
+[lib]
+
+# Build both Rust library and WebAssembly cdylib artifacts.
+crate-type = ["cdylib", "rlib"]
+
 # Feature Configuration
 
 [features]
