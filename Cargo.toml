@@ -11,16 +11,16 @@ resolver = "2"
 
 # Workspace members: core engine, UI layer, and example application.
 members = [
-    "yew-datatable-core",
-    "yew-datatable",
-    "example",
+"yew-datatable-core",
+"yew-datatable",
+"example",
 ]
 
 # Shared package metadata inherited by all workspace members.
 [workspace.package]
 
 # Current release version.
-version = "0.1.1"
+version = "0.1.2"
 
 # Rust edition for language and compiler features.
 edition = "2024"
@@ -67,7 +67,6 @@ serde = { version = "1.0.228", features = ["derive"] }
 
 # JSON parser and serializer for structured data.
 serde_json = "1.0.100"
-
 
 # Deny warnings in clippy
 [workspace.metadata]
