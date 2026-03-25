@@ -84,6 +84,27 @@ jobs:
       - name: Run tests (core)
         run: cargo test --package yew-datatable-core --target x86_64-unknown-linux-gnu
 
+      # --- WASM Test Setup ---
+      - name: Install wasm-pack
+        run: |
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      # --- Web Target (wasm-pack) ---
+      - name: Build with wasm-pack (yew-datatable)
+        working-directory: yew-datatable
+        run: wasm-pack build --target web --no-typescript
+
+      - name: Run wasm tests (yew-datatable)
+        working-directory: yew-datatable
+        run: wasm-pack test --node
+
+      # (Optional) Cache wasm-pack output for faster builds
+      - name: Cache wasm-pack pkg
+        uses: actions/cache@v4
+        with:
+          path: yew-datatable/pkg
+          key: wasm-pack-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+
       # --- Test Coverage ---
       - name: Install cargo-tarpaulin
         uses: taiki-e/install-action@v2

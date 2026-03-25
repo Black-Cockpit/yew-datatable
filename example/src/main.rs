@@ -3,6 +3,7 @@
 mod data;
 mod pages;
 
+use crate::pages::async_data::AsyncDataDemo;
 use crate::pages::column_features::ColumnFeaturesDemo;
 use crate::pages::filtering::FilteringDemo;
 use crate::pages::full_demo::FullDemo;
@@ -19,6 +20,7 @@ enum Page {
     Pagination,
     Selection,
     ColumnFeatures,
+    AsyncData,
 }
 
 fn main() {
@@ -36,6 +38,7 @@ fn app() -> Html {
         (Page::Pagination, "Pagination"),
         (Page::Selection, "Selection"),
         (Page::ColumnFeatures, "Column Features"),
+        (Page::AsyncData, "Async Data"),
     ];
 
     html! {
@@ -72,7 +75,7 @@ fn app() -> Html {
                                         }
                                     )}
                                 >
-                                    {label}
+                                    {*label}
                                 </button>
                             }
                         }).collect::<Html>()}
@@ -89,6 +92,7 @@ fn app() -> Html {
                     Page::Pagination => html! { <PaginationDemo /> },
                     Page::Selection => html! { <SelectionDemo /> },
                     Page::ColumnFeatures => html! { <ColumnFeaturesDemo /> },
+                    Page::AsyncData => html! { <AsyncDataDemo /> },
                 }}
             </main>
 

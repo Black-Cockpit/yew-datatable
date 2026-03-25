@@ -46,7 +46,15 @@ yew-datatable-core = { workspace = true }
 yew = { workspace = true }
 
 # WebAssembly browser API bindings for DOM element access.
-web-sys = { workspace = true, features = ["HtmlInputElement", "HtmlSelectElement", "Event", "MouseEvent", "KeyboardEvent"] }
+web-sys = { workspace = true, features = ["Document", "Element", "Event", "EventTarget", "HtmlElement", "HtmlInputElement", "HtmlSelectElement", "KeyboardEvent", "MouseEvent", "Node", "Window"] }
 
 # Rust-to-JavaScript interop layer for type casting in event handlers.
 wasm-bindgen = { workspace = true }
+
+[dev-dependencies]
+
+# Browser utility helpers used by WASM integration tests.
+gloo = { workspace = true, features = ["futures", "timers"] }
+
+# WASM test harness for browser-based component tests.
+wasm-bindgen-test = "0.3"

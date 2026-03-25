@@ -33,3 +33,9 @@ pub mod column_features;
 /// Combines sorting, filtering, pagination, selection, and column
 /// features into a single comprehensive demo.
 pub mod full_demo;
+
+/// Async data synchronization demonstration page.
+///
+/// Demonstrates server-like delayed updates where parent rows and
+/// table rows stay synchronized.
+pub mod async_data;
