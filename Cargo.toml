@@ -20,7 +20,7 @@ members = [
 [workspace.package]
 
 # Current release version.
-version = "0.1.0"
+version = "0.1.1"
 
 # Rust edition for language and compiler features.
 edition = "2024"
@@ -51,7 +51,7 @@ yew-datatable-core = { path = "./yew-datatable-core", version = "0.1.0" }
 yew-datatable = { path = "./yew-datatable", version = "0.1.0" }
 
 # Yew framework for WebAssembly frontend development.
-yew = { version = "0.23.0", features = ["csr"] }
+yew = { version = "0.22.0", features = ["csr"] }
 
 # WebAssembly browser API bindings.
 web-sys = "0.3"
