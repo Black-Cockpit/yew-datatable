@@ -293,16 +293,41 @@ pub fn use_table<T: Clone + PartialEq + 'static>(
     data: Vec<T>,
     _options: Option<DataTableOptions>,
 ) -> UseTableHandle<T> {
+    // Preserve the latest incoming data value for this render.
+    let incoming_data = data;
+
+    // Clone the incoming data for one-time table initialization.
+    let initial_data = incoming_data.clone();
+
     // Store the table persistently across renders
     let table_ref: Rc<RefCell<DataTable<T>>> = use_mut_ref(|| {
-        let mut t = DataTable::with_data(columns, data, |_, idx| DataTableRowId::from_index(idx));
+        let mut t = DataTable::with_data(columns, initial_data, |_, idx| DataTableRowId::from_index(idx));
         t.process();
         t
     });
 
+    // Track the last data value passed as hook input.
+    let last_prop_data: Rc<RefCell<Vec<T>>> = use_mut_ref(|| incoming_data.clone());
+
     let data_version: Rc<RefCell<u32>> = use_mut_ref(|| 0);
     let state = use_state(|| table_ref.borrow().state().clone());
     let trigger = use_state(|| 0u32);
+
+    // Synchronize table data when the hook input changes.
+    if *last_prop_data.borrow() != incoming_data {
+        // Apply the new data and recompute table row models.
+        {
+            let mut table = table_ref.borrow_mut();
+            table.set_data_indexed(incoming_data.clone());
+            table.process();
+        }
+
+        // Record the synchronized prop value.
+        *last_prop_data.borrow_mut() = incoming_data;
+
+        // Track data mutations for downstream equality checks.
+        *data_version.borrow_mut() += 1;
+    }
 
     UseTableHandle {
         table: table_ref,
