@@ -3,6 +3,7 @@
 //! This module provides a centralized location for importing commonly used
 //! types from both the core engine and UI components.
 
+pub use crate::components::cell_render_context::CellRenderContext;
 pub use crate::components::data_table::DataTable;
 pub use crate::components::data_table::DataTableProps;
 pub use crate::components::pagination::Pagination;

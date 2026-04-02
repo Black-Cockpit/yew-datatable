@@ -1,3 +1,9 @@
+/// Context passed to custom cell renderers.
+///
+/// Provides row data, row and column identifiers, indices,
+/// and the cell value as a string.
+pub mod cell_render_context;
+
 /// Main DataTable component that assembles all sub-components.
 ///
 /// Provides a complete data table with global filter, sortable headers,
