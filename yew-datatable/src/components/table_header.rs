@@ -23,11 +23,13 @@ pub struct TableHeaderProps<T: Clone + PartialEq + 'static> {
     pub show_sort_indicator: bool,
 }
 
-/// Compares `TableHeaderProps` by their configuration fields, excluding the table handle.
+/// Compares `TableHeaderProps` by all fields, including the table handle.
 impl<T: Clone + PartialEq + 'static> PartialEq for TableHeaderProps<T> {
     fn eq(&self, other: &Self) -> bool {
-        // Compare all configuration fields except the table handle.
-        self.class == other.class
+        // Compare the table handle for reactivity-aware equality.
+        self.table == other.table
+            // Compare all configuration fields.
+            && self.class == other.class
             && self.th_class == other.th_class
             && self.show_sort_indicator == other.show_sort_indicator
     }

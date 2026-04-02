@@ -1,8 +1,8 @@
 //! Table body component.
 
+use crate::components::cell_render_context::CellRenderContext;
 use crate::hooks::use_table::UseTableHandle;
 use yew::prelude::*;
-use yew_datatable_core::prelude::DataTableRowId;
 
 /// Props for the TableBody component.
 #[derive(Properties, Clone)]
@@ -35,38 +35,24 @@ pub struct TableBodyProps<T: Clone + PartialEq + 'static> {
     pub render_cell: Option<Callback<CellRenderContext<T>, Html>>,
 }
 
-/// Compares `TableBodyProps` by their configuration fields, excluding the table handle.
+/// Compares `TableBodyProps` by all fields, including the table handle.
+///
+/// The `render_cell` callback is always treated as changed when present,
+/// since `Callback` does not implement `PartialEq`.
 impl<T: Clone + PartialEq + 'static> PartialEq for TableBodyProps<T> {
     fn eq(&self, other: &Self) -> bool {
-        // Compare all configuration fields except the table handle.
-        self.class == other.class
+        // Compare the table handle for reactivity-aware equality.
+        self.table == other.table
+            // Compare all configuration fields.
+            && self.class == other.class
             && self.tr_class == other.tr_class
             && self.td_class == other.td_class
             && self.selected_class == other.selected_class
             && self.selectable == other.selectable
+            // Callbacks cannot be compared; assume changed if either side has one.
+            && self.render_cell.is_none()
+            && other.render_cell.is_none()
     }
-}
-
-/// Context passed to custom cell renderers.
-#[derive(Clone)]
-pub struct CellRenderContext<T> {
-    /// The row data.
-    pub row: T,
-
-    /// The row ID.
-    pub row_id: DataTableRowId,
-
-    /// The row index.
-    pub row_index: usize,
-
-    /// The column ID.
-    pub column_id: String,
-
-    /// The column index.
-    pub column_index: usize,
-
-    /// The cell value as a string.
-    pub value: String,
 }
 
 /// Table body component that renders rows and cells.

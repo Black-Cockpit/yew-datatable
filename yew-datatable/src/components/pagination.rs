@@ -35,11 +35,13 @@ pub struct PaginationProps<T: Clone + PartialEq + 'static> {
     pub page_size_options: Vec<usize>,
 }
 
-/// Compares `PaginationProps` by their configuration fields, excluding the table handle.
+/// Compares `PaginationProps` by all fields, including the table handle.
 impl<T: Clone + PartialEq + 'static> PartialEq for PaginationProps<T> {
     fn eq(&self, other: &Self) -> bool {
-        // Compare all configuration fields except the table handle.
-        self.class == other.class
+        // Compare the table handle for reactivity-aware equality.
+        self.table == other.table
+            // Compare all configuration fields.
+            && self.class == other.class
             && self.button_class == other.button_class
             && self.disabled_class == other.disabled_class
             && self.show_page_size_selector == other.show_page_size_selector

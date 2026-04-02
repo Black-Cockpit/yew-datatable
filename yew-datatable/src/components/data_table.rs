@@ -40,11 +40,13 @@ pub struct DataTableProps<T: Clone + PartialEq + 'static> {
     pub selectable: bool,
 }
 
-/// Compares `DataTableProps` by their configuration fields, excluding the table handle.
+/// Compares `DataTableProps` by all fields, including the table handle.
 impl<T: Clone + PartialEq + 'static> PartialEq for DataTableProps<T> {
     fn eq(&self, other: &Self) -> bool {
-        // Compare all configuration fields except the table handle.
-        self.class == other.class
+        // Compare the table handle for reactivity-aware equality.
+        self.table == other.table
+            // Compare all configuration fields.
+            && self.class == other.class
             && self.table_class == other.table_class
             && self.show_pagination == other.show_pagination
             && self.show_global_filter == other.show_global_filter
