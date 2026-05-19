@@ -20,7 +20,7 @@ members = [
 [workspace.package]
 
 # Current release version.
-version = "0.2.0"
+version = "0.2.1"
 
 # Rust edition for language and compiler features.
 edition = "2024"
@@ -47,8 +47,8 @@ rust-version = "1.85"
 # Both `path` (for local development) and `version` (for crates.io resolution)
 # are specified so that `cargo publish` resolves the dependency from the registry
 # while local builds use the workspace path.
-yew-datatable-core = { path = "./yew-datatable-core", version = "0.2.0" }
-yew-datatable = { path = "./yew-datatable", version = "0.2.0" }
+yew-datatable-core = { path = "./yew-datatable-core", version = "0.2.1" }
+yew-datatable = { path = "./yew-datatable", version = "0.2.1" }
 
 # Yew framework for WebAssembly frontend development.
 yew = { version = "0.23.0", features = ["csr"] }
