@@ -37,8 +37,9 @@ pub struct TableBodyProps<T: Clone + PartialEq + 'static> {
 
 /// Compares `TableBodyProps` by all fields, including the table handle.
 ///
-/// The `render_cell` callback is always treated as changed when present,
-/// since `Callback` does not implement `PartialEq`.
+/// The `render_cell` callback is compared through `Callback`'s `PartialEq`,
+/// which is pointer equality on the inner `Rc`, so the body memoizes
+/// correctly and re-renders only when the callback identity changes.
 impl<T: Clone + PartialEq + 'static> PartialEq for TableBodyProps<T> {
     fn eq(&self, other: &Self) -> bool {
         // Compare the table handle for reactivity-aware equality.
@@ -49,9 +50,8 @@ impl<T: Clone + PartialEq + 'static> PartialEq for TableBodyProps<T> {
             && self.td_class == other.td_class
             && self.selected_class == other.selected_class
             && self.selectable == other.selectable
-            // Callbacks cannot be compared; assume changed if either side has one.
-            && self.render_cell.is_none()
-            && other.render_cell.is_none()
+            // Compare the cell renderer by callback pointer equality.
+            && self.render_cell == other.render_cell
     }
 }
 
